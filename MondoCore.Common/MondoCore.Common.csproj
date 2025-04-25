@@ -7,7 +7,7 @@
     <Company>MondoCore</Company>
     <Product>MondoCore</Product>
     <Authors>Jim Lightfoot</Authors>
-    <RepositoryUrl>https://github.com/jim-lightfoot/MondoCore</RepositoryUrl>
+    <RepositoryUrl>https://github.com/MondoCore/MondoCore.Common</RepositoryUrl>
     <Description>Common classes used by other MondoCore libraries</Description>
     <RepositoryType>git</RepositoryType>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
