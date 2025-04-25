@@ -11,7 +11,7 @@
     <Description>Common classes used by other MondoCore libraries</Description>
     <RepositoryType>git</RepositoryType>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
-    <Version>2.1.0</Version>
+    <Version>2.2.0</Version>
     <Nullable>enable</Nullable>
     <LangVersion>latest</LangVersion>
     <PackageReadmeFile>readme.md</PackageReadmeFile>
