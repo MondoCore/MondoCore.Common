@@ -1,0 +1,13 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs
+/MondoCore.Common/bin
+/MondoCore.Common/obj
+/MondoCore.Common.FunctionalTests/bin
+/MondoCore.Common.FunctionalTests/obj
+/MondoCore.Common.FunctionalTests/TestFiles
+/MondoCore.Common.UnitTests/bin
+/MondoCore.Common.UnitTests/obj
+/MondoCore.Common.UnitTests/TestFiles
