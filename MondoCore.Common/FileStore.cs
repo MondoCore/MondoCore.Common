@@ -53,30 +53,6 @@ namespace MondoCore.Common
         }
 
         /****************************************************************************/
-        /// <summary>
-        /// Retrieves a file
-        /// </summary>
-        /// <param name="id">Relative path of file to retrieve</param>
-        /// <returns>A string of the contents</returns>
-        /****************************************************************************/
-        public async Task<string> Get(string id, Encoding encoding = null)
-        {
-            encoding = encoding ?? UTF8Encoding.UTF8;
-
-            return encoding.GetString(await GetBytes(id));
-        }
-
-        /****************************************************************************/
-        /// <inheritdoc/>
-        public async Task<byte[]> GetBytes(string id)
-        {
-            using(var memStream = await GetStream(id))
-            {
-                return memStream.ToArray();
-            }
-        }
-
-        /****************************************************************************/
         /// <inheritdoc/>
         public async Task Get(string id, Stream destination)
         {
@@ -134,37 +110,6 @@ namespace MondoCore.Common
 
         /****************************************************************************/
         /// <inheritdoc/>
-        public async Task Put(string id, string content, Encoding encoding = null)
-        {
-            var path = CombinePath(id);
-
-            encoding = encoding ?? UTF8Encoding.UTF8;
-
-            try
-            {
-                using (var fileStream = new FileStream(path,  
-                                                       FileMode.Append, 
-                                                       FileAccess.Write, 
-                                                       FileShare.None,  
-                                                       bufferSize: 4096, 
-                                                       useAsync: true))  
-                {  
-                    var bytes = encoding.GetBytes(content);  
-      
-                    await fileStream.WriteAsync(bytes, 0, bytes.Length).ConfigureAwait(false);  
-                }; 
-            }
-            catch(DirectoryNotFoundException)
-            {
-                if(EnsurePathExists(path))
-                    await Put(id, content, encoding);
-                else
-                    throw;
-            }        
-        }
-
-        /****************************************************************************/
-        /// <inheritdoc/>
         public async Task Put(string id, Stream content)
         {
             var path = CombinePath(id);
@@ -196,14 +141,14 @@ namespace MondoCore.Common
         {
             var enume = await this.Find(filter);
             var list = new List<string>(enume);
-            List<Task> tasks = asynchronous ? new List<Task>() : null;
+            List<Task>? tasks = asynchronous ? new List<Task>() : null;
 
             foreach(var file in list)
             {
                 var task = fnEach(new FileBlob(file));
 
                 if(asynchronous)
-                    tasks.Add(task);
+                    tasks!.Add(task);
                 else
                     await task;
             }
@@ -270,6 +215,11 @@ namespace MondoCore.Common
         }
 
         public Task<Stream> OpenWrite(string id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<T> AsEnumerable<T>()
         {
             throw new NotImplementedException();
         }

@@ -49,38 +49,6 @@ namespace MondoCore.Common
         #region IBlobStore
 
         /****************************************************************************/
-        public async Task<string> Get(string id, Encoding encoding = null)
-        {
-            encoding = encoding ?? UTF8Encoding.UTF8;
-
-            try
-            { 
-                var result = encoding.GetString(_store[id]);
-
-                return await Task.FromResult(result);
-            }
-            catch
-            {
-                throw new FileNotFoundException();
-            }
-        }
-
-        /****************************************************************************/
-        public async Task<byte[]> GetBytes(string id)
-        {
-            try
-            { 
-                var result = _store[id] as byte[];
-
-                return await Task.FromResult(result);
-            }
-            catch
-            {
-                throw new FileNotFoundException();
-            }
-        }
-
-        /****************************************************************************/
         public async Task Get(string id, Stream destination)
         {
             if(!_store.ContainsKey(id))
@@ -102,16 +70,6 @@ namespace MondoCore.Common
 
             return Task.FromResult((Stream)new MemoryStream(blob, 0, blob.Length));
         }        
-
-        /****************************************************************************/
-        public Task Put(string id, string content, Encoding encoding = null)
-        {
-            encoding = encoding ?? UTF8Encoding.UTF8;
-
-            _store[id] = encoding.GetBytes(content);
-
-            return Task.CompletedTask;
-        }
 
         /****************************************************************************/
         public Task Put(string id, Stream content)
@@ -143,14 +101,14 @@ namespace MondoCore.Common
         public async Task Enumerate(string filter, Func<IBlob, Task> fnEach, bool asynchronous = true)
         {
             var list = await this.Find(filter);
-            List<Task> tasks = asynchronous ? new List<Task>() : null;
+            List<Task>? tasks = asynchronous ? new List<Task>() : null;
 
             foreach(var file in list)
             {
                 var task = fnEach(new FileStore.FileBlob(file));
 
                 if(asynchronous)
-                    tasks.Add(task);
+                    tasks!.Add(task);
                 else
                     await task;
             }

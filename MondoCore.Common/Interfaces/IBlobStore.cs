@@ -10,7 +10,7 @@
  *  Original Author: Jim Lightfoot                                           
  *    Creation Date: 29 Nov 2015                                             
  *                                                                           
- *   Copyright (c) 2015-2024 - Jim Lightfoot, All rights reserved            
+ *   Copyright (c) 2015-2025 - Jim Lightfoot, All rights reserved            
  *                                                                           
  *  Licensed under the MIT license:                                          
  *    http://www.opensource.org/licenses/mit-license.php                     
@@ -33,21 +33,6 @@ namespace MondoCore.Common
     public interface IBlobStore
     {
         /// <summary>
-        /// Gets a blob with the given id/path
-        /// </summary>
-        /// <param name="id">An identifier for the blob. This could be a path in file storage for instance</param>
-        /// <param name="encoding">A text encode to use to encode the text</param>
-        /// <returns>A string that is the blob</returns>
-        Task<string> Get(string id, Encoding encoding = null);
-
-        /// <summary>
-        /// Gets a blob with the given id/path
-        /// </summary>
-        /// <param name="id">An identifier for the blob. This could be a path in file storage for instance</param>
-        /// <returns>The blob as an array of bytes</returns>
-        Task<byte[]> GetBytes(string id);
-
-        /// <summary>
         /// Writes a blob with the given id/path to the given stream
         /// </summary>
         /// <param name="id">An identifier for the blob. This could be a path.</param>
@@ -67,13 +52,6 @@ namespace MondoCore.Common
         /// <param name="id">An identifier for the blob. This could be a path.</param>
         /// <returns>A writable stream to write to the blob</returns>
         Task<Stream> OpenWrite(string id);
-
-        /// <summary>
-        /// Puts the string into the blob storage
-        /// </summary>
-        /// <param name="id">An identifier for the blob. This could be a path in file storage for instance</param>
-        /// <param name="content">The string to store</param>
-        Task Put(string id, string content, Encoding encoding = null);
 
         /// <summary>
         /// Puts the stream into the blob storage

@@ -18,7 +18,7 @@ namespace MondoCore.Common.UnitTests
         [TestMethod]
         public async Task MemoryStore_Put_string()
         {
-            var store = CreateStorage();
+            IBlobStore store = CreateStorage();
 
             await store.Delete("bob");
 
