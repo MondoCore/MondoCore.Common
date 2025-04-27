@@ -80,13 +80,19 @@ namespace MondoCore.Common
         /// <param name="fnEach">A function to call with each blob</param>
         /// <returns></returns>
         Task Enumerate(string filter, Func<IBlob, Task> fnEach, bool asynchronous = true);
+
+        IAsyncEnumerable<IBlob> AsAsyncEnumerable();
     }
 
     public interface IBlob
     {
-        string                      Name        { get; }
-        bool                        Deleted     { get; }
-        IDictionary<string, string> Metadata    { get; }
-        IDictionary<string, string> Tags        { get; }
+        string                       Name            { get; }
+        bool                         Deleted         { get; }
+        bool                         Enabled         { get; }
+        string?                      Version         { get; }
+        string                       ContentType     { get; }
+        DateTimeOffset?              Expires         { get; }
+        IDictionary<string, string>? Metadata        { get; }
+        IDictionary<string, string>? Tags            { get; }
     }
 }

@@ -10,7 +10,7 @@
  *  Original Author: Jim Lightfoot                                         
  *    Creation Date: 29 Jan 2020                                           
  *                                                                         
- *   Copyright (c) 2020 - Jim Lightfoot, All rights reserved               
+ *   Copyright (c) 2020-2025 - Jim Lightfoot, All rights reserved               
  *                                                                         
  *  Licensed under the MIT license:                                        
  *    http://www.opensource.org/licenses/mit-license.php                   
@@ -22,7 +22,6 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace MondoCore.Common
@@ -95,7 +94,6 @@ namespace MondoCore.Common
             return Task.FromResult(keys.Where( k=> k.MatchesWildcard(filter) ));
         }
 
-
         /****************************************************************************/
         /// <inheritdoc/>
         public async Task Enumerate(string filter, Func<IBlob, Task> fnEach, bool asynchronous = true)
@@ -120,6 +118,18 @@ namespace MondoCore.Common
         public Task<Stream> OpenWrite(string id)
         {
             throw new NotImplementedException();
+        }
+
+        public async IAsyncEnumerable<IBlob> AsAsyncEnumerable()
+        {
+            var keys = _store.Keys as IEnumerable<string>;
+
+            foreach(var key in keys)
+            {
+                await Task.Delay(0);
+
+                yield return new FileStore.FileBlob(key);
+            }
         }
 
         #endregion

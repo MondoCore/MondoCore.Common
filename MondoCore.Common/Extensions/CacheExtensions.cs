@@ -41,7 +41,7 @@ namespace MondoCore.Common
         /// <param name="cache">Cache to query</param>
         /// <param name="key">Key of item to retrieve</param>
         /// <param name="fnCreate">Callback for creating the item if it does not exist in the cache</param>
-        /// <param name="onError">A callback to call if there wa an error adding the newly creating item into the cache</param>
+        /// <param name="onError">A callback to call if there was an error adding the newly created item into the cache</param>
         /// <param name="dtExpires">Explicit datetime to expire the item in the cache</param>
         /// <param name="tsExpires">Time relative to now to expire the cache. If both dtExpires is valid then this value is ignored</param>
         /// <param name="dependency">Optional dependency that will remove the item from the cache id triggered</param>

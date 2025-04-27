@@ -292,6 +292,41 @@ namespace MondoCore.Common.UnitTests
             await store2.Delete("firebird.tiff");
         }
 
+        [TestMethod]
+        public async Task MemoryStore_AsAsyncEnumerable()
+        {
+            var store = CreateStorage();
+
+            await store.Put("docs/bio.doc",       "fred");
+            await store.Put("photos/photo.jpg",     "flintstone");
+            await store.Put("resumes/resume.pdf",    "bedrock");
+            await store.Put("stuff/portfolio.pdf", "stuff");
+
+            var blobs = new List<IBlob>();
+
+            var list = store.AsAsyncEnumerable();
+
+            await foreach(var blob in list)
+            {
+                blobs.Add(blob);
+            }
+
+            var result = blobs.Select(b=> b.Name).ToList();
+
+            Assert.AreEqual(4, result.Count);
+
+            Assert.IsTrue(result.Contains("docs/bio.doc"));
+            Assert.IsTrue(result.Contains("photos/photo.jpg"));
+            Assert.IsTrue(result.Contains("resumes/resume.pdf"));
+            Assert.IsTrue(result.Contains("stuff/portfolio.pdf"));
+
+            await store.Delete("docs/bio.doc");
+            await store.Delete("photos/photo.jpg");
+            await store.Delete("resumes/resume.pdf");
+            await store.Delete("stuff/portfolio.pdf");
+        }
+
+
         private IBlobStore CreateStorage(string folder = "")
         { 
             return new MemoryStore();

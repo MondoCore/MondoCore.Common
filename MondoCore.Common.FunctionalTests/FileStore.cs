@@ -234,6 +234,35 @@ namespace MondoCore.Common.FunctionalTests
         }
 
         [TestMethod]
+        public async Task FileStore_AsAsyncEnumerable()
+        {
+            var store = CreateStorage("", "asyncenum");
+
+            await store.Put("docs/bio.doc",       "fred");
+            await store.Put("photos/photo.jpg",     "flintstone");
+            await store.Put("resumes/resume.pdf",    "bedrock");
+            await store.Put("stuff/portfolio.pdf", "stuff");
+
+            var blobs = new List<IBlob>();
+
+            var list = store.AsAsyncEnumerable();
+
+            await foreach(var blob in list)
+            {
+                blobs.Add(blob);
+            }
+
+            var result = blobs.Select(b=> b.Name).ToList();
+
+            Assert.AreEqual(4, result.Count());
+
+            Assert.IsTrue(result.Contains("docs\\bio.doc"));
+            Assert.IsTrue(result.Contains("photos\\photo.jpg"));
+            Assert.IsTrue(result.Contains("resumes\\resume.pdf"));
+            Assert.IsTrue(result.Contains("stuff\\portfolio.pdf"));
+        }
+
+        [TestMethod]
         public async Task FileStore_Enumerate_folder()
         {
             var store  = CreateStorage("cars\\chevy");
@@ -269,9 +298,9 @@ namespace MondoCore.Common.FunctionalTests
             await store2.Delete("firebird.tiff");
         }
 
-        private IBlobStore CreateStorage(string folder = "")
+        private IBlobStore CreateStorage(string folder = "", string uid = null)
         { 
-            var uid        = Guid.NewGuid().ToString();
+            uid ??= Guid.NewGuid().ToString();
             var path       = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location).SubstringBefore("\\bin").Replace("/", "\\");
             var folderPath = Path.Combine(path, "TestFiles", uid, folder);
 
