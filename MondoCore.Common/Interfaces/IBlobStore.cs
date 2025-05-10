@@ -82,6 +82,59 @@ namespace MondoCore.Common
         Task Enumerate(string filter, Func<IBlob, Task> fnEach, bool asynchronous = true);
 
         IAsyncEnumerable<IBlob> AsAsyncEnumerable();
+
+        #region Default methods
+
+        /// <summary>
+        /// Gets a blob with the given id/path
+        /// </summary>
+        /// <param name="id">An identifier for the blob. This could be a path in file storage for instance</param>
+        /// <param name="encoding">A text encoding to use to encode the text</param>
+        /// <ret urns>A string that is the blob</returns>
+        public async Task<string> Get(string id, Encoding? encoding = null)
+        {
+            encoding = encoding ?? UTF8Encoding.UTF8;
+
+            var bytes = await this.GetBytes(id);
+            var stripped = bytes.StripNulls();
+
+            return encoding.GetString(stripped.Bytes, 0, stripped.Length);
+        }
+
+        /// <summary>
+        /// Gets a blob with the given id/path
+        /// </summary>
+        /// <param name="id">An identifier for the blob. This could be a path in file storage for instance</param>
+        /// <returns>The blob as an array of bytes</returns>
+        public async Task<byte[]> GetBytes(string id)
+        {
+            using(var memStream = new MemoryStream())
+            {
+                await this.Get(id, memStream);
+
+                return memStream.ToArray();
+            }
+        }
+
+        /// <summary>
+        /// Puts the string into the blob storage
+        /// </summary>
+        /// <param name="id">An identifier for the blob. This could be a path in file storage for instance</param>
+        /// <param name="content">The string to store</param>
+        public async Task Put(string id, string content, Encoding? encoding = null)
+        {
+            encoding = encoding ?? UTF8Encoding.UTF8;
+
+            var bytes = encoding.GetBytes(content);
+            var stripped = bytes.StripNulls();
+
+            using(var stream = new MemoryStream(stripped.Bytes, 0, stripped.Length))
+            { 
+                await this.Put(id, stream);
+            }
+        }
+
+        #endregion
     }
 
     public interface IBlob

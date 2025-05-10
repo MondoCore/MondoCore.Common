@@ -10,7 +10,7 @@
  *  Original Author: Jim Lightfoot                                          
  *    Creation Date: 29 Nov 2015                                            
  *                                                                          
- *   Copyright (c) 2015-2020 - Jim Lightfoot, All rights reserved           
+ *   Copyright (c) 2015-2025 - Jim Lightfoot, All rights reserved           
  *                                                                          
  *  Licensed under the MIT license:                                         
  *    http://www.opensource.org/licenses/mit-license.php                    
@@ -19,7 +19,6 @@
 
 using System;
 using System.Threading.Tasks;
-using System.Collections.Generic;
 
 namespace MondoCore.Common
 {
@@ -65,25 +64,20 @@ namespace MondoCore.Common
             { 
                 tobj = await fnCreate();
 
-                // We can just fire and forget adding it to the cache
-                _ = Task.Run( async ()=>
+                try
+                { 
+                    if(dtExpires != null)
+                        await cache.Add(key, tobj!, dtExpires.Value, dependency);
+                    else if(tsExpires != null)
+                        await cache.Add(key, tobj!, tsExpires.Value, dependency);
+                    else
+                        await cache.Add(key, tobj!);
+                }
+                catch(Exception ex)
                 {
-                    try
-                    { 
-                        if(dtExpires != null)
-                            await cache.Add(key, tobj!, dtExpires.Value, dependency);
-                        else if(tsExpires != null)
-                            await cache.Add(key, tobj!, tsExpires.Value, dependency);
-                        else
-                            await cache.Add(key, tobj!);
-                    }
-                    catch(Exception ex)
-                    {
-                        if(onError != null)
-                            await onError(ex);
-                    }
-
-                }).ConfigureAwait(false);
+                    if(onError != null)
+                        await onError(ex);
+                }
             }
 
             return tobj!;
