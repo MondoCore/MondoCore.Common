@@ -10,7 +10,7 @@
  *  Original Author: Jim Lightfoot                                          
  *    Creation Date: 1 Jan 2020                                             
  *                                                                          
- *   Copyright (c) 2005-2020 - Jim Lightfoot, All rights reserved           
+ *   Copyright (c) 2005-2025 - Jim Lightfoot, All rights reserved           
  *                                                                          
  *  Licensed under the MIT license:                                         
  *    http://www.opensource.org/licenses/mit-license.php                    
@@ -124,5 +124,22 @@ namespace MondoCore.Common
 
             return p3;
         }
+
+        public static (byte[] Bytes, int Length) StripNulls(this byte[] bytes)
+        {
+            var newBytes = new byte[bytes.Length];
+            var length = 0;
+
+            foreach(var b in bytes)
+            {
+                if(b == 0)
+                    break;
+
+                newBytes[length++] = b;
+            }
+
+            return (newBytes, length);
+        }
+
     }
 }

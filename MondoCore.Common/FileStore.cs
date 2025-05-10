@@ -10,7 +10,7 @@
  *  Original Author: Jim Lightfoot                                          
  *    Creation Date: 20 Jan 2020                                            
  *                                                                          
- *   Copyright (c) 2020-2021 - Jim Lightfoot, All rights reserved                
+ *   Copyright (c) 2020-2025 - Jim Lightfoot, All rights reserved                
  *                                                                          
  *  Licensed under the MIT license:                                         
  *    http://www.opensource.org/licenses/mit-license.php                    
@@ -21,7 +21,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace MondoCore.Common
@@ -78,34 +77,28 @@ namespace MondoCore.Common
         /// <inheritdoc/>
         public async Task Delete(string id)
         {   
-            _ = Task.Run( async ()=>
-            { 
-                try
-                {
-                    var fileName = CombinePath(id);
-                    int nTrys = 0;
+            try
+            {
+                var fileName = CombinePath(id);
+                int nTrys = 0;
 
-                    while(File.Exists(fileName) && ++nTrys <= 20)
+                while(File.Exists(fileName) && ++nTrys <= 20)
+                {
+                    try
                     {
-                        try
-                        {
-                            File.Delete(fileName);
-                            return;
-                        }
-                        catch
-                        {
-                        }
-
-                        await Task.Delay(100);
+                        File.Delete(fileName);
+                        return;
                     }
+                    catch
+                    {
+                    }
+
+                    await Task.Delay(50);
                 }
-                catch
-                {
-                }        
-
-            }).ConfigureAwait(false);
-
-            await Task.CompletedTask;
+            }
+            catch
+            {
+            }        
         }
 
         /****************************************************************************/
@@ -157,11 +150,27 @@ namespace MondoCore.Common
                 await Task.WhenAll(tasks);
         }
 
+        /****************************************************************************/
+        /// <inheritdoc/>
+        public async IAsyncEnumerable<IBlob> AsAsyncEnumerable()
+        {
+            var directory = new DirectoryInfo(_pathRoot);
+            var files     = directory.EnumerateFiles("*.*", SearchOption.AllDirectories);
+            var rootPath = _pathRoot.EnsureEndsWith(Path.DirectorySeparatorChar);
+
+            foreach(var file in files)
+            { 
+                await Task.Delay(0);
+
+                yield return new FileStore.FileBlob(file.FullName.Substring(rootPath.Length));
+            }
+        }
+
         #endregion
 
         /****************************************************************************/
         /// <summary>
-        /// Ensures the full path of the given filename exists by creating it if does no exist
+        /// Ensures the full path of the given filename exists by creating it if does not exist
         /// </summary>
         /// <param name="fileName">A full path name of a file</param>
         /// <returns>Returns true if the path was created or false if it was already there</returns>
@@ -182,44 +191,13 @@ namespace MondoCore.Common
         #region Private 
 
         /****************************************************************************/
-        private async Task<MemoryStream> GetStream(string id)
-        {
-            using(var fileStream = await OpenRead(id))  
-            {  
-                var memStream = new MemoryStream();
-                var buffer    = new byte[4096];  
-
-                try
-                { 
-                    var numRead = 0;
-                
-                    while((numRead = await fileStream.ReadAsync(buffer, 0, buffer.Length)) != 0)  
-                    {  
-                        memStream.Write(buffer, 0, numRead);
-                    }
-                }  
-                catch(Exception ex)
-                {
-                    memStream.Dispose();
-                    throw ex;
-                }
-  
-                return memStream;  
-            }
-        }
-
-        /****************************************************************************/
         private string CombinePath(string id)
         {
             return Path.Combine(_pathRoot, id.Replace("/", "\\").Replace("~", "").EnsureNotStartsWith("\\")).Replace("\\\\", "\\");
         }
 
+        /****************************************************************************/
         public Task<Stream> OpenWrite(string id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IEnumerable<T> AsEnumerable<T>()
         {
             throw new NotImplementedException();
         }
@@ -232,10 +210,14 @@ namespace MondoCore.Common
                 this.Name = blob;
             }
 
-            public string                      Name     { get; }
-            public bool                        Deleted  => false;
-            public IDictionary<string, string> Metadata => null;
-            public IDictionary<string, string> Tags     => null;
+            public string                       Name        { get; }
+            public bool                         Deleted     => false;
+            public bool                         Enabled     => true;
+            public string?                      Version     => null;
+            public string                       ContentType => "";
+            public DateTimeOffset?              Expires     => null;
+            public IDictionary<string, string>? Metadata    => null;
+            public IDictionary<string, string>? Tags        => null;
         }
 
         #endregion

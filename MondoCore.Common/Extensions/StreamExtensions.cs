@@ -10,7 +10,7 @@
  *  Original Author: Jim Lightfoot                                           
  *    Creation Date: 1 Jan 2020                                              
  *                                                                           
- *   Copyright (c) 2005-2020 - Jim Lightfoot, All rights reserved            
+ *   Copyright (c) 2005-2025 - Jim Lightfoot, All rights reserved            
  *                                                                           
  *  Licensed under the MIT license:                                          
  *    http://www.opensource.org/licenses/mit-license.php                     
@@ -47,7 +47,7 @@ namespace MondoCore.Common
                 var str    = encoder.GetString(array);
                 var atrLen = str.Length;
 
-                return str;
+                return str.TrimNulls();
             }
 
             if(stream.CanSeek)
@@ -59,8 +59,12 @@ namespace MondoCore.Common
                 { 
                     await stream.CopyToAsync(mem).ConfigureAwait(false);
 
-                    return encoder.GetString(mem.ToArray());
+                    return encoder.GetString(mem.ToArray()).TrimNulls();
                 }
+            }
+            catch(Exception ex)
+            {
+                throw;
             }
             finally
             { 

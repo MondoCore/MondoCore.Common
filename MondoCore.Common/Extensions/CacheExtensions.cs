@@ -10,7 +10,7 @@
  *  Original Author: Jim Lightfoot                                          
  *    Creation Date: 29 Nov 2015                                            
  *                                                                          
- *   Copyright (c) 2015-2020 - Jim Lightfoot, All rights reserved           
+ *   Copyright (c) 2015-2025 - Jim Lightfoot, All rights reserved           
  *                                                                          
  *  Licensed under the MIT license:                                         
  *    http://www.opensource.org/licenses/mit-license.php                    
@@ -19,7 +19,6 @@
 
 using System;
 using System.Threading.Tasks;
-using System.Collections.Generic;
 
 namespace MondoCore.Common
 {
@@ -41,7 +40,7 @@ namespace MondoCore.Common
         /// <param name="cache">Cache to query</param>
         /// <param name="key">Key of item to retrieve</param>
         /// <param name="fnCreate">Callback for creating the item if it does not exist in the cache</param>
-        /// <param name="onError">A callback to call if there wa an error adding the newly creating item into the cache</param>
+        /// <param name="onError">A callback to call if there was an error adding the newly created item into the cache</param>
         /// <param name="dtExpires">Explicit datetime to expire the item in the cache</param>
         /// <param name="tsExpires">Time relative to now to expire the cache. If both dtExpires is valid then this value is ignored</param>
         /// <param name="dependency">Optional dependency that will remove the item from the cache id triggered</param>
@@ -65,25 +64,20 @@ namespace MondoCore.Common
             { 
                 tobj = await fnCreate();
 
-                // We can just fire and forget adding it to the cache
-                _ = Task.Run( async ()=>
+                try
+                { 
+                    if(dtExpires != null)
+                        await cache.Add(key, tobj!, dtExpires.Value, dependency);
+                    else if(tsExpires != null)
+                        await cache.Add(key, tobj!, tsExpires.Value, dependency);
+                    else
+                        await cache.Add(key, tobj!);
+                }
+                catch(Exception ex)
                 {
-                    try
-                    { 
-                        if(dtExpires != null)
-                            await cache.Add(key, tobj!, dtExpires.Value, dependency);
-                        else if(tsExpires != null)
-                            await cache.Add(key, tobj!, tsExpires.Value, dependency);
-                        else
-                            await cache.Add(key, tobj!);
-                    }
-                    catch(Exception ex)
-                    {
-                        if(onError != null)
-                            await onError(ex);
-                    }
-
-                }).ConfigureAwait(false);
+                    if(onError != null)
+                        await onError(ex);
+                }
             }
 
             return tobj!;

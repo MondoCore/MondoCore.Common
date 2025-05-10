@@ -10,7 +10,7 @@
  *  Original Author: Jim Lightfoot                                          
  *    Creation Date: 16 Jan 2021                                             
  *                                                                          
- *   Copyright (c) 2021 - Jim Lightfoot, All rights reserved           
+ *   Copyright (c) 2025 - Jim Lightfoot, All rights reserved           
  *                                                                          
  *  Licensed under the MIT license:                                         
  *    http://www.opensource.org/licenses/mit-license.php                    
@@ -37,7 +37,7 @@ namespace MondoCore.Common
 
             var block = new ActionBlock<Block<T>>(async (payload)=>
             {
-                await fnEach(payload.Index, payload.Data);
+                await fnEach(payload.Index, payload.Data!);
             }, 
             new ExecutionDataflowBlockOptions { MaxDegreeOfParallelism = maxParallelism, CancellationToken = cancelToken });
 
@@ -58,7 +58,7 @@ namespace MondoCore.Common
         private class Block<T>
         {
             internal long Index { get; set; }
-            internal T    Data  { get; set; }
+            internal T?   Data  { get; set; }
         }
     }
 }
