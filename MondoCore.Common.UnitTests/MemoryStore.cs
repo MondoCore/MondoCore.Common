@@ -1,5 +1,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
@@ -111,7 +112,7 @@ namespace MondoCore.Common.UnitTests
             await store.Delete("bob");
             await store.Put("bob", "fred");
 
-            using(var strm = new MemoryStream())
+            using(Stream strm = new MemoryStream())
             { 
                 await store.Get("bob", strm);
 
@@ -134,23 +135,60 @@ namespace MondoCore.Common.UnitTests
                 Assert.AreEqual("fred", await strm.ReadStringAsync());
             }
 
+            Assert.AreEqual("fred", await store.Get("bob"));
+
             await store.Delete("bob");
         }
 
         [TestMethod]
-        [ExpectedException(typeof(FileNotFoundException))]
-        public async Task MemoryStore_Delete()
+        public async Task MemoryStore_OpenWrite()
         {
             var store = CreateStorage();
 
             await store.Delete("bob");
             await store.Put("bob", "fred");
 
-            Assert.AreEqual("fred", await store.Get("bob"));
+            using(var strm = await store.OpenWrite("bob"))
+            { 
+                strm.Write(UTF8Encoding.UTF8.GetBytes("wilma"));
+            }
+
+            var result = await store.Get("bob");
+
+            Assert.AreEqual("fredwilma", result);
+
+            await store.Delete("bob");
+        }
+
+        [TestMethod]
+        public async Task MemoryStore_OpenWrite_doesnt_exist()
+        {
+            var store = CreateStorage();
+            var id = Guid.NewGuid().ToString();
+
+            await store.Delete(id);
+
+            using(var strm = await store.OpenWrite(id))
+            { 
+                strm.Write(UTF8Encoding.UTF8.GetBytes("fred"));
+                strm.Write(UTF8Encoding.UTF8.GetBytes("wilma"));
+            }
+
+            var result = await store.Get(id);
+
+            Assert.AreEqual("fredwilma", result);
+
+            await store.Delete(id);
+        }
+
+        [TestMethod]
+        public async Task MemoryStore_Delete()
+        {
+            var store = CreateStorage();
 
             await store.Delete("bob");
 
-            Assert.AreEqual("fred", await store.Get("bob"));
+            Assert.IsFalse(await store.Exists("bob"));
         }
 
         [TestMethod]

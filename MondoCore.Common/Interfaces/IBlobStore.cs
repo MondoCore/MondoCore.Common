@@ -10,7 +10,7 @@
  *  Original Author: Jim Lightfoot                                           
  *    Creation Date: 29 Nov 2015                                             
  *                                                                           
- *   Copyright (c) 2015-2025 - Jim Lightfoot, All rights reserved            
+ *   Copyright (c) 2015-2026 - Jim Lightfoot, All rights reserved            
  *                                                                           
  *  Licensed under the MIT license:                                          
  *    http://www.opensource.org/licenses/mit-license.php                     
@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
@@ -30,7 +31,7 @@ namespace MondoCore.Common
     /// <summary>
     /// Interface for blob storage
     /// </summary>
-    public interface IBlobStore
+    public interface IBlobStore : IDisposable
     {
         /// <summary>
         /// Writes a blob with the given id/path to the given stream
@@ -80,6 +81,18 @@ namespace MondoCore.Common
         /// <param name="fnEach">A function to call with each blob</param>
         /// <returns></returns>
         Task Enumerate(string filter, Func<IBlob, Task> fnEach, bool asynchronous = true);
+
+        /// <summary>
+        /// Locks a blob and prevents updating or deletion
+        /// </summary>
+        /// <param name="id">An identifier for the blob. This could be a path.</param>
+        Task<IDisposable> Lock(string id);
+
+        /// <summary>
+        /// Determinse if blob exists
+        /// </summary>
+        /// <param name="id">An identifier for the blob. This could be a path.</param>
+        Task<bool> Exists(string id);
 
         IAsyncEnumerable<IBlob> AsAsyncEnumerable();
 

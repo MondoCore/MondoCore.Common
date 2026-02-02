@@ -10,7 +10,7 @@
  *  Original Author: Jim Lightfoot                                          
  *    Creation Date: 20 Jan 2020                                            
  *                                                                          
- *   Copyright (c) 2020-2025 - Jim Lightfoot, All rights reserved                
+ *   Copyright (c) 2020-2026 - Jim Lightfoot, All rights reserved                
  *                                                                          
  *  Licensed under the MIT license:                                         
  *    http://www.opensource.org/licenses/mit-license.php                    
@@ -166,6 +166,28 @@ namespace MondoCore.Common
             }
         }
 
+        /****************************************************************************/
+        /// <inheritdoc/>
+        public Task<IDisposable> Lock(string id)
+        {
+            throw new NotImplementedException();
+        }
+        
+
+        /****************************************************************************/
+        /// <inheritdoc/>
+        public Task<bool> Exists(string id)
+        {
+            return Task.FromResult<bool>(File.Exists(id));
+        }
+        
+        /****************************************************************************/
+        /// <inheritdoc/>
+        public void Dispose()
+        {
+            // Nothing to do
+        }
+
         #endregion
 
         /****************************************************************************/
@@ -187,7 +209,7 @@ namespace MondoCore.Common
 
             return false;
         }
-
+        
         #region Private 
 
         /****************************************************************************/
