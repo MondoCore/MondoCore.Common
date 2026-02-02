@@ -88,7 +88,7 @@ namespace MondoCore.Common
         /// <returns></returns>
         public static T GetValue<T, U>(this U obj, string propertyName)
         {
-            var type    = obj.GetType();
+            var type    = obj!.GetType();
             var property = type.GetProperty(propertyName);
 
             if(property == null)

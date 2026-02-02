@@ -136,7 +136,6 @@ namespace MondoCore.Common.FunctionalTests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(FileNotFoundException))]
         public async Task FileStore_Delete()
         {
             var store = CreateStorage();
@@ -149,7 +148,8 @@ namespace MondoCore.Common.FunctionalTests
             await store.Delete("bob");
 
             await Task.Delay(100);
-            Assert.AreEqual("fred", await store.Get("bob"));
+
+            Assert.IsFalse(await store.Exists("bob"));
         }
 
         [TestMethod]

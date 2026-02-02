@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -33,7 +34,7 @@ namespace MondoCore.Common
     /// </summary>
     public class MemoryStore : IBlobStore
     {
-        private readonly ConcurrentDictionary<string, byte[]> _store = new ConcurrentDictionary<string, byte[]>();
+        private readonly ConcurrentDictionary<string, MemoryStream> _store = new ConcurrentDictionary<string, MemoryStream>();
 
         /****************************************************************************/
         public void Clear()
@@ -41,8 +42,8 @@ namespace MondoCore.Common
             _store.Clear();
         }
 
-        public byte[] this[string key] => _store[key];
-        public byte[] this[int key]    => _store.ToList()[key].Value;
+        public byte[] this[string key] => _store[key].ToArray();
+        public byte[] this[int key]    => _store.ToList()[key].Value.ToArray();
         public int    Count            => _store.Count;
 
         #region IBlobStore
@@ -53,9 +54,13 @@ namespace MondoCore.Common
             if(!_store.ContainsKey(id))
                 throw new FileNotFoundException();
                 
-            var result = _store[id] as byte[];
+            var result = _store[id] as Stream;
 
-            await destination.WriteAsync(result, 0, result.Length);
+            result.Seek(0L, SeekOrigin.Begin);
+
+            await result.CopyToAsync(destination);
+
+            return;
         }
           
         /****************************************************************************/
@@ -65,23 +70,25 @@ namespace MondoCore.Common
             if(!_store.ContainsKey(id))
                 throw new FileNotFoundException();
                 
-            var blob = _store[id] as byte[];
-
-            return Task.FromResult((Stream)new MemoryStream(blob, 0, blob.Length));
+            return Task.FromResult<Stream>(new NonDisposablStream(_store[id]));
         }        
 
         /****************************************************************************/
-        public Task Put(string id, Stream content)
+        public async Task Put(string id, Stream content)
         {
-            _store[id] = content.ToArray();
+            var newStream = new MemoryStream();
 
-            return Task.CompletedTask;
+            await content.CopyToAsync(newStream);
+
+            _store[id] = newStream;
+
+            return;
         }
 
         /****************************************************************************/
         public Task Delete(string id)
         {
-            _store.TryRemove(id, out byte[] _);
+            _store.TryRemove(id, out _);
 
             return Task.CompletedTask;
         }
@@ -115,11 +122,59 @@ namespace MondoCore.Common
                 await Task.WhenAll(tasks);
         }
 
-        public Task<Stream> OpenWrite(string id)
+        /****************************************************************************/
+        /// <inheritdoc/>
+        public async Task<Stream> OpenWrite(string id)
         {
-            throw new NotImplementedException();
+            if(!_store.ContainsKey(id))
+                await (this as IBlobStore).Put(id, "");
+
+            return new NonDisposablStream(_store[id]);
         }
 
+        /****************************************************************************/
+        internal class NonDisposablStream(Stream parent) : Stream
+        {
+            public override bool CanRead  => parent.CanRead;
+            public override bool CanSeek  => parent.CanSeek;
+            public override bool CanWrite => parent.CanWrite;
+            public override long Length   => parent.Length;
+
+            public override long Position { get => parent.Position; set => parent.Position = value; }
+
+            public override void Flush()
+            {
+                parent.Flush();
+            }
+
+            public override int Read(byte[] buffer, int offset, int count)
+            {
+                return parent.Read(buffer, offset, count);
+            }
+
+            public override long Seek(long offset, SeekOrigin origin)
+            {
+                return parent.Seek(offset, origin);
+            }
+
+            public override void SetLength(long value)
+            {
+                parent.SetLength(value);
+            }
+
+            public override void Write(byte[] buffer, int offset, int count)
+            {
+                parent.Write(buffer, offset, count);
+            }
+
+            protected override void Dispose(bool disposing)
+            {
+                base.Dispose(disposing);
+            }
+        }
+
+        /****************************************************************************/
+        /// <inheritdoc/>
         public async IAsyncEnumerable<IBlob> AsAsyncEnumerable()
         {
             var keys = _store.Keys as IEnumerable<string>;
@@ -132,6 +187,38 @@ namespace MondoCore.Common
             }
         }
 
+        /****************************************************************************/
+        /// <inheritdoc/>
+        public Task<IDisposable> Lock(string id)
+        {
+            return Task.FromResult<IDisposable>(new FakeDisposable());
+        }
+
+        /****************************************************************************/
+        /// <inheritdoc/>
+        public Task<bool> Exists(string id)
+        {
+            return Task.FromResult<bool>(_store.ContainsKey(id));
+        }
+
+        /****************************************************************************/
+        /// <inheritdoc/>
+        public void Dispose()
+        {
+            foreach(var blob in _store.Values)
+                blob.Dispose();
+
+            _store.Clear();
+        }
+
         #endregion
+    }
+
+    internal class FakeDisposable : IDisposable
+    {
+        public void Dispose()
+        {
+            // Do nothing
+        }
     }
 }
