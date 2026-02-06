@@ -46,7 +46,7 @@ namespace MondoCore.Common
 
         /****************************************************************************/
         /// <summary>
-        /// Get the value form the cache
+        /// Get the value from the cache
         /// </summary>
         public Task<object> Get(string key)
         {

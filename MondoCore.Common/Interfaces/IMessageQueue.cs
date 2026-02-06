@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MondoCore.Common
@@ -28,7 +29,7 @@ namespace MondoCore.Common
     /****************************************************************************/
     /****************************************************************************/
     /// <summary>
-    /// Interface for sending messages
+    /// Interface for sending and receiving messages
     /// </summary>
     public interface IMessageQueue
     {
@@ -54,6 +55,22 @@ namespace MondoCore.Common
     /****************************************************************************/
     /****************************************************************************/
     /// <summary>
+    /// Interface for sending messages
+    /// </summary>
+    public interface IMessageQueue<out T>
+    {
+        /// <summary>
+        /// Send a message
+        /// </summary>
+        /// <param name="message">Message to send</param>
+        /// <param name="sendOn">Optional time when to send</param>
+        /// <param name="cancellationToken">A cancellation token</param>
+        Task Send(string message, DateTimeOffset? sendOn = null, CancellationToken cancellationToken = default);
+    }
+
+    /****************************************************************************/
+    /****************************************************************************/
+    /// <summary>
     /// Interface for a message
     /// </summary>
     public interface IMessage
@@ -73,5 +90,19 @@ namespace MondoCore.Common
         /// </summary>
         /// <param name="queueName">Name of message queue to create</param>
         IMessageQueue CreateQueue(string queueName);
+    }
+
+    /****************************************************************************/
+    /****************************************************************************/
+    /// <summary>
+    /// Interface for for sending messages
+    /// </summary>
+    public interface IMessageQueueFactory<out T>
+    {
+        /// <summary>
+        /// Create a message queue
+        /// </summary>
+        /// <param name="queueName">Name of message queue to create</param>
+        IMessageQueue<T> CreateQueue(string queueName);
     }
 }
