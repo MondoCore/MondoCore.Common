@@ -1,11 +1,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-using MondoCore.Common;
 using System;
-using System.Collections.Generic;
-
-using Newtonsoft.Json;
-using System.Linq;
 
 namespace MondoCore.Common.UnitTests
 {
@@ -92,44 +87,44 @@ namespace MondoCore.Common.UnitTests
             Assert.AreEqual("1969", car2.Year);
             Assert.AreEqual(null, car2.Engine);
         }
+    }
 
-        public class Automobile
+    public class Automobile
+    {
+        public string Make  {get; set;}
+        public string Model {get; set;}
+        public string Color {get; set;}
+        public int    Year  {get; set;}
+
+        public override string ToString()
         {
-            public string Make  {get; set;}
-            public string Model {get; set;}
-            public string Color {get; set;}
-            public int    Year  {get; set;}
-
-            public override string ToString()
-            {
-                return Model;
-            }
+            return Model;
         }
+    }
 
-        public class Car
-        {
-            public string Make  {get; set;}
-            public string Model {get; set;}
-            public string Color {get; set;}
-            public int    Year  {get; set;}
-        }
+    public class Car
+    {
+        public string Make  {get; set;}
+        public string Model {get; set;}
+        public string Color {get; set;}
+        public int    Year  {get; set;}
+    }
 
-        public class Car2
-        {
-            public string Make  {get; set;}
-            public string Model {get; set;}
-            public string Color {get; set;}
-            public int    Year  {get; set;}
-            public string Engine  {get; set;}
-        }
+    public class Car2
+    {
+        public string Make  {get; set;}
+        public string Model {get; set;}
+        public string Color {get; set;}
+        public int    Year  {get; set;}
+        public string Engine  {get; set;}
+    }
 
-        public class Car3
-        {
-            public string Make  {get; set;}
-            public string Model {get; set;}
-            public string Color {get; set;}
-            public string Year  {get; set;}
-            public string Engine  {get; set;}
-        }
+    public class Car3
+    {
+        public string Make  {get; set;}
+        public string Model {get; set;}
+        public string Color {get; set;}
+        public string Year  {get; set;}
+        public string Engine  {get; set;}
     }
 }

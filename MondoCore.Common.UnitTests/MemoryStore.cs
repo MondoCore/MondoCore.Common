@@ -7,15 +7,12 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 
-using MondoCore.Common;
-
 namespace MondoCore.Common.UnitTests
 {
     [TestClass]
     [TestCategory("Unit Tests")]
     public class MemoryStoreTests
     {
-
         [TestMethod]
         public async Task MemoryStore_Put_string()
         {

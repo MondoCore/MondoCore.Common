@@ -125,8 +125,16 @@ namespace MondoCore.Common
             return p3;
         }
 
+        /****************************************************************************/
+        /// <summary>
+        /// Strips nulls from the end of the byte array
+        /// </summary>
+        /// <returns>A new byte array without ending nulls<returns>
         public static (byte[] Bytes, int Length) StripNulls(this byte[] bytes)
         {
+            if(bytes.Length == 0 || bytes[bytes.Length-1] != '\0')
+                return (bytes, bytes.Length);
+
             var newBytes = new byte[bytes.Length];
             var length = 0;
 
@@ -140,6 +148,5 @@ namespace MondoCore.Common
 
             return (newBytes, length);
         }
-
     }
 }

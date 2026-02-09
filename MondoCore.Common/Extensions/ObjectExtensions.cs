@@ -10,7 +10,7 @@
  *  Original Author: Jim Lightfoot                                           
  *    Creation Date: 1 Jan 2020                                              
  *                                                                           
- *   Copyright (c) 2005-2025 - Jim Lightfoot, All rights reserved            
+ *   Copyright (c) 2005-2026 - Jim Lightfoot, All rights reserved            
  *                                                                           
  *  Licensed under the MIT license:                                          
  *    http://www.opensource.org/licenses/mit-license.php                     
@@ -20,8 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-
-using Newtonsoft.Json;
+using System.Text.Json;
 using MondoCore.Collections;
 
 namespace MondoCore.Common
@@ -62,7 +61,7 @@ namespace MondoCore.Common
         /// <param name="obj"></param>
         /// <param name="propertyName"></param>
         /// <returns></returns>
-        public static T GetValue<T>(this object obj, string propertyName)
+        public static T? GetValue<T>(this object obj, string propertyName)
         {
             var type    = obj.GetType();
             var property = type.GetProperty(propertyName);
@@ -73,9 +72,9 @@ namespace MondoCore.Common
             var val = property.GetValue(obj);
 
             if(!val.GetType().IsEquivalentTo(typeof(T)))
-                return (T)Convert.ChangeType(val, typeof(T));
+                return (T?)Convert.ChangeType(val, typeof(T));
 
-            return (T)val;
+            return (T?)val;
         }
 
         /// <summary>
@@ -86,7 +85,7 @@ namespace MondoCore.Common
         /// <param name="obj"></param>
         /// <param name="propertyName"></param>
         /// <returns></returns>
-        public static T GetValue<T, U>(this U obj, string propertyName)
+        public static T? GetValue<T, U>(this U obj, string propertyName)
         {
             var type    = obj!.GetType();
             var property = type.GetProperty(propertyName);
@@ -97,9 +96,9 @@ namespace MondoCore.Common
             var val = property.GetValue(obj);
 
             if(!val.GetType().IsEquivalentTo(typeof(T)))
-                return (T)Convert.ChangeType(val, typeof(T));
+                return (T?)Convert.ChangeType(val, typeof(T));
 
-            return (T)val;
+            return (T?)val;
         }
 
         /// <summary>
@@ -150,8 +149,8 @@ namespace MondoCore.Common
             return changed;
         }
 
-        public static T1 Map<T2, T1>(this T2 obj) where T1 : class, new()
-                                                  where T2 : class
+        public static T1? Map<T2, T1>(this T2 obj) where T1 : class, new()
+                                                   where T2 : class
         {
             if (obj == null)
                 return null;
@@ -195,7 +194,7 @@ namespace MondoCore.Common
 
                 if(childrenAsJson)
                 { 
-                    var json = JsonConvert.SerializeObject(val);
+                    var json = JsonSerializer.Serialize(val);
 
                     dict.Add(prefix + key, json);
 

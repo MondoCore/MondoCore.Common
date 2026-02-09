@@ -3,14 +3,14 @@
  *    The MondoCore Libraries  							                    
  *                                                                          
  *        Namespace: MondoCore.Common							            
- *             File: DictionaryExtensions.cs					    		        
- *        Class(es): DictionaryExtensions				         		            
- *          Purpose: Extensions for dictionaries                  
+ *             File: EnumerableExtensions.cs					    		        
+ *        Class(es): EnumerableExtensions				         		            
+ *          Purpose: Extensions for IEnumerable                  
  *                                                                          
  *  Original Author: Jim Lightfoot                                          
  *    Creation Date: 16 Jan 2021                                             
  *                                                                          
- *   Copyright (c) 2025 - Jim Lightfoot, All rights reserved           
+ *   Copyright (c) 2025-2026 - Jim Lightfoot, All rights reserved           
  *                                                                          
  *  Licensed under the MIT license:                                         
  *    http://www.opensource.org/licenses/mit-license.php                    
