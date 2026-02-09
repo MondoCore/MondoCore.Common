@@ -14,7 +14,7 @@
     <Version>3.5.0</Version>
     <Nullable>enable</Nullable>
     <LangVersion>latest</LangVersion>
-    <PackageReadmeFile>readme.md</PackageReadmeFile>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
     <Title>MondoCore.Common</Title>
     <PackageTags>.Net common</PackageTags>
     <PackageId>$(AssemblyName)</PackageId>
@@ -27,9 +27,9 @@
   <ItemGroup>
     <None Include="..\LICENSE">
       <Pack>True</Pack>
-      <PackagePath></PackagePath>
+      <PackagePath>\</PackagePath>
     </None>
-    <None Include="..\readme.md">
+    <None Include="..\README.md">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
