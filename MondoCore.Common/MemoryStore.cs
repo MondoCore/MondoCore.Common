@@ -10,7 +10,7 @@
  *  Original Author: Jim Lightfoot                                         
  *    Creation Date: 29 Jan 2020                                           
  *                                                                         
- *   Copyright (c) 2020-2025 - Jim Lightfoot, All rights reserved               
+ *   Copyright (c) 2020-2026 - Jim Lightfoot, All rights reserved               
  *                                                                         
  *  Licensed under the MIT license:                                        
  *    http://www.opensource.org/licenses/mit-license.php                   
@@ -20,7 +20,6 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;

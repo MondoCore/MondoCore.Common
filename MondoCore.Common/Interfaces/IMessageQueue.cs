@@ -10,7 +10,7 @@
  *  Original Author: Jim Lightfoot                                           
  *    Creation Date: 3 Dec 2017                                             
  *                                                                           
- *   Copyright (c) 2015-2025 - Jim Lightfoot, All rights reserved            
+ *   Copyright (c) 2015-2026 - Jim Lightfoot, All rights reserved            
  *                                                                           
  *  Licensed under the MIT license:                                          
  *    http://www.opensource.org/licenses/mit-license.php                     
@@ -18,9 +18,6 @@
  ****************************************************************************/
 
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 

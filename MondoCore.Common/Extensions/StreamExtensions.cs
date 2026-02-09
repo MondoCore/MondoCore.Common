@@ -21,6 +21,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MondoCore.Common
@@ -61,10 +63,6 @@ namespace MondoCore.Common
 
                     return encoder.GetString(mem.ToArray()).TrimNulls();
                 }
-            }
-            catch(Exception ex)
-            {
-                throw;
             }
             finally
             { 
@@ -148,6 +146,29 @@ namespace MondoCore.Common
             }
         }
 
+        /// <summary>
+        /// Loads an object from the stream
+        /// </summary>
+        /// <param name="stream">The stream to read the object from</param>
+        /// <returns>An object loaded from the stream</returns>
+        public static async Task<T> ReadObject<T>(this Stream stream, CancellationToken cancellationToken = default) where T : class
+        {
+            if(stream.CanSeek)
+                stream.Seek(0, SeekOrigin.Begin);
 
+            var result = await JsonSerializer.DeserializeAsync<T>(stream, cancellationToken: cancellationToken);
+
+            return result!;
+        } 
+
+        /// <summary>
+        /// Uploads an object to a stream
+        /// </summary>
+        /// <param name="stream">The stream to load the object to</param>
+        /// <param name="cancellationToken">A cancellation token</param>
+        public static async Task WriteObject<T>(this Stream stream, T obj, CancellationToken cancellationToken = default) where T : class
+        {
+            await JsonSerializer.SerializeAsync(stream, obj, cancellationToken: cancellationToken);
+        } 
     }
 }

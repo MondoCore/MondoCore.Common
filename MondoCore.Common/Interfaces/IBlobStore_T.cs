@@ -19,7 +19,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.IO;
 using System.Text;
 using System.Threading;
@@ -126,7 +125,7 @@ namespace MondoCore.Common
         /// <returns>The blob as an array of bytes</returns>
         public async Task<byte[]> GetBytes(string id, CancellationToken cancellationToken = default)
         {
-            using var memStream = new MemoryStream();
+            await using var memStream = new MemoryStream();
            
             await this.Get(id, memStream, cancellationToken);
 
@@ -153,26 +152,11 @@ namespace MondoCore.Common
         Task Put(string id, Stream content, CancellationToken cancellationToken = default);
 
         /// <summary>
-        /// Puts the stream into the blob storage
-        /// </summary>
-        /// <param name="id">An identifier for the blob. This could be a path in file storage for instance</param>
-        /// <param name="cancellationToken">A cancellation token</param>
-        /// <param name="content">The content to store</param>
-        Task Put(IBlobLease lease, Stream content, CancellationToken cancellationToken = default);
-
-        /// <summary>
         /// Deletes the blob from storage
         /// </summary>
         /// <param name="id">An identifier for the blob. This could be a path in file storage for instance</param>
         /// <param name="cancellationToken">A cancellation token</param>
         Task Delete(string id, CancellationToken cancellationToken = default);
-
-        /// <summary>
-        /// Deletes the blob from storage
-        /// </summary>
-        /// <param name="lease">A lease (lock) on a specific blob. Must be the result of AcquireLease</param>
-        /// <param name="cancellationToken">A cancellation token</param>
-        Task Delete(IBlobLease lease, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Opens a writable stream to a blob with the given id/path 
@@ -181,14 +165,6 @@ namespace MondoCore.Common
         /// <param name="cancellationToken">A cancellation token</param>
         /// <returns>A writable stream to write to the blob</returns>
         Task<Stream> OpenWrite(string id, CancellationToken cancellationToken = default);
-
-        /// <summary>
-        /// Opens a writable stream to a blob with the given id/path 
-        /// </summary>
-        /// <param name="lease">A lease (lock) on a specific blob. Must be the result of AcquireLease</param>
-        /// <param name="cancellationToken">A cancellation token</param>
-        /// <returns>A writable stream to write to the blob</returns>
-        Task<Stream> OpenWrite(IBlobLease lease, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Creates a lease (lock) on a blob to be used for subsequent write operations
@@ -216,12 +192,42 @@ namespace MondoCore.Common
              await this.Put(id, stream, cancellationToken);
         }
 
+        #endregion
+    }
+
+    public interface IBlobLease : IAsyncDisposable
+    {
+        public string BlobId   { get; }
+        public string LeaseId  { get; }
+
+        /// <summary>
+        /// Puts the stream into the blob storage
+        /// </summary>
+        /// <param name="cancellationToken">A cancellation token</param>
+        /// <param name="content">The content to store</param>
+        Task Put(Stream content, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Deletes the blob from storage
+        /// </summary>
+        /// <param name="cancellationToken">A cancellation token</param>
+        Task Delete(CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Opens a writable stream to a blob with the given id/path 
+        /// </summary>
+        /// <param name="cancellationToken">A cancellation token</param>
+        /// <returns>A writable stream to write to the blob</returns>
+        Task<Stream> OpenWrite(CancellationToken cancellationToken = default);
+
+        #region Default methods
+
         /// <summary>
         /// Puts the string into the blob storage
         /// </summary>
-        /// <param name="lease">A lease (lock) on a specific blob. Must be the result of AcquireLease</param>
+        /// <param name="content">The string to store</param>
         /// <param name="cancellationToken">A cancellation token</param>
-        public async Task Put(IBlobLease lease, string content, Encoding? encoding = null, CancellationToken cancellationToken = default)
+        public async Task Put(string content, Encoding? encoding = null, CancellationToken cancellationToken = default)
         {
             encoding = encoding ?? UTF8Encoding.UTF8;
 
@@ -230,13 +236,14 @@ namespace MondoCore.Common
 
             var stream = new MemoryStream(stripped.Bytes, 0, stripped.Length);
             
-             await this.Put(lease, stream, cancellationToken);
+             await this.Put(stream, cancellationToken);
         }
 
         #endregion
     }
 
-    public interface IBlobLease : IAsyncDisposable
+    public class LeaseException(Exception innerException) : Exception("There is an existing lease on this blob", innerException)
     {
+            
     }
 }

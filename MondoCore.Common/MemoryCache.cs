@@ -10,7 +10,7 @@
  *  Original Author: Jim Lightfoot                                           
  *    Creation Date: 29 Nov 2015                                             
  *                                                                           
- *   Copyright (c) 2015-2020 - Jim Lightfoot, All rights reserved            
+ *   Copyright (c) 2015-2026 - Jim Lightfoot, All rights reserved            
  *                                                                           
  *  Licensed under the MIT license:                                          
  *    http://www.opensource.org/licenses/mit-license.php                     
@@ -18,8 +18,6 @@
  ****************************************************************************/
 
 using System;
-using System.Collections.Generic;
-using System.Collections.Concurrent;
 using System.Threading.Tasks;
 
 using MondoCore.Collections.Concurrent;
@@ -48,7 +46,7 @@ namespace MondoCore.Common
         /// <summary>
         /// Get the value from the cache
         /// </summary>
-        public Task<object> Get(string key)
+        public Task<object?> Get(string key)
         {
             if(_cache.ContainsKey(key))
             { 
@@ -57,13 +55,13 @@ namespace MondoCore.Common
                 if(!entry.IsExpired)
                 { 
                     entry.SetLastAccessed();
-                    return Task.FromResult(entry.Item);
+                    return Task.FromResult<object?>(entry.Item);
                 }
 
                 Remove(key);
             }
 
-            return Task.FromResult((object)null);
+            return Task.FromResult((object?)null);
         }
                  
         /****************************************************************************/
@@ -73,13 +71,13 @@ namespace MondoCore.Common
         }
 
         /****************************************************************************/
-        public Task Add(string key, object objToAdd, DateTime dtExpires, ICacheDependency dependency = null)
+        public Task Add(string key, object objToAdd, DateTime dtExpires, ICacheDependency? dependency = null)
         {
             return Add( new CacheEntry { Key = key, Item = objToAdd, AbsoluteExpiration = dtExpires });
         }
 
         /****************************************************************************/
-        public Task Add(string key, object objToAdd, TimeSpan tsExpires, ICacheDependency dependency = null)
+        public Task Add(string key, object objToAdd, TimeSpan tsExpires, ICacheDependency? dependency = null)
         {
             return Add( new CacheEntry { Key = key, Item = objToAdd, SlidingExpiration = tsExpires });
         }
@@ -111,8 +109,8 @@ namespace MondoCore.Common
         /****************************************************************************/        
         private class CacheEntry
         {
-            internal string    Key                { get; set; }
-            internal object    Item               { get; set; }
+            internal string    Key                { get; set; } = "";
+            internal object?   Item               { get; set; }
             internal DateTime? AbsoluteExpiration { get; set; }
             internal TimeSpan? SlidingExpiration  { get; set; }
 
