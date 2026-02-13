@@ -73,7 +73,6 @@ namespace MondoCore.Common.UnitTests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(FileNotFoundException))]
         public async Task MemoryStore_Get_notfound()
         {
             var store = CreateStorage();
@@ -81,13 +80,12 @@ namespace MondoCore.Common.UnitTests
             await store.Delete("bob");
             await store.Put("bob", "fred");
 
-            Assert.AreEqual("fred", await store.Get("george"));
+            await Assert.ThrowsAsync<FileNotFoundException>( async ()=> await store.Get("george"));
 
             await store.Delete("bob");
         }
 
         [TestMethod]
-        [ExpectedException(typeof(FileNotFoundException))]
         public async Task MemoryStore_GetBytes_notfound()
         {
             var store = CreateStorage();
@@ -96,7 +94,7 @@ namespace MondoCore.Common.UnitTests
             await store.Delete("bob");
             await store.Put("bob", "fred");
 
-            Assert.AreEqual("fred", encoding.GetString(await store.GetBytes("george")));
+            await Assert.ThrowsAsync<FileNotFoundException>( async ()=> await store.GetBytes("george"));
 
             await store.Delete("bob");
         }
