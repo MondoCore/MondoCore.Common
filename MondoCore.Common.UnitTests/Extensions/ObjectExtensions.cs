@@ -23,7 +23,7 @@ namespace MondoCore.Common.UnitTests
         {
             var src  = new Automobile { Make = "Chevy", Model = "Camaro" , Color = "Blue", Year = 1969 };
 
-            Assert.ThrowsException<ArgumentException>( ()=> src.SetValue("Year", "bob"));
+            Assert.Throws<ArgumentException>( ()=> src.SetValue("Year", "bob"));
         }
 
         [TestMethod]
