@@ -54,15 +54,16 @@ namespace MondoCore.Common
     /// <summary>
     /// Interface for sending messages
     /// </summary>
-    public interface IMessageQueue<out T>
+    public interface IMessageQueue<T> where T : class
     {
         /// <summary>
         /// Send a message
         /// </summary>
         /// <param name="message">Message to send</param>
         /// <param name="sendOn">Optional time when to send</param>
+        /// <param name="correlationId">An optional correlation id</param>
         /// <param name="cancellationToken">A cancellation token</param>
-        Task Send(string message, DateTimeOffset? sendOn = null, CancellationToken cancellationToken = default);
+        Task Send(T message, DateTimeOffset? sendOn = null, string? correlationId = null, CancellationToken cancellationToken = default);
     }
 
     /****************************************************************************/
@@ -94,7 +95,7 @@ namespace MondoCore.Common
     /// <summary>
     /// Interface for for sending messages
     /// </summary>
-    public interface IMessageQueueFactory<out T>
+    public interface IMessageQueueFactory<T> where T : class
     {
         /// <summary>
         /// Create a message queue

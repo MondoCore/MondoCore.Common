@@ -115,13 +115,13 @@ ___
 > Interface for sending messages
 
 ##
-<small>async Task</small> <b>Send</b>(<small>string message, DateTimeOffset? sendOn = null, CancellationToken cancellationToken = default</small>)
+<small>async Task</small> <b>Send</b>(<small>T message, DateTimeOffset? sendOn = null, string? correlationId = null, CancellationToken cancellationToken = default</small>)
 
 > Sends a message to the queue with an optional date/time offset.
 
 #### Implementations
 
-* AzureServiceBus<T> (in [MondoCore.Azure.ServiceBus](https://github.com/MondoCore/MondoCore.Azure.ServiceBus))
+* ServiceBusQueue<T> (in [MondoCore.Azure.ServiceBus](https://github.com/MondoCore/MondoCore.Azure.ServiceBus))
 * AzureStorageQueue<T> (in [MondoCore.Azure.Storage.Queue](https://github.com/MondoCore/MondoCore.Azure.Storage.Queue))
 
 <a href="IMessageQueueFactory" />
