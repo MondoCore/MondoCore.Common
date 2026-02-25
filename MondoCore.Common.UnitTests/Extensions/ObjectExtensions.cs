@@ -87,10 +87,31 @@ namespace MondoCore.Common.UnitTests
             Assert.AreEqual("1969", car2.Year);
             Assert.AreEqual(null, car2.Engine);
         }
+
+        #region GetValue
+
+        [TestMethod]
+        public void ObjectExtensions_GetValue_guid_to_string()
+        {
+            var car = new Automobile { Make = "Chevy", Model = "Camaro", Color = "Blue", Year = 1969 };
+
+            Assert.IsFalse(string.IsNullOrWhiteSpace(car.GetValue<string>("Id")));
+        }
+
+        [TestMethod]
+        public void ObjectExtensions_GetValue_string_to_guid()
+        {
+            var car = new Car { Make = Guid.NewGuid().ToString(), Model = "Camaro", Color = "Blue", Year = 1969 };
+
+            Assert.IsNotNull(car.GetValue<Guid>("Make"));
+        }
+
+        #endregion
     }
 
     public class Automobile
     {
+        public Guid   Id    {get; set;} = Guid.NewGuid();
         public string Make  {get; set;}
         public string Model {get; set;}
         public string Color {get; set;}
