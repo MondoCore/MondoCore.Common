@@ -70,9 +70,18 @@ namespace MondoCore.Common
                 return default;
 
             var val = property.GetValue(obj);
+            var valType = val.GetType();    
 
-            if(!val.GetType().IsEquivalentTo(typeof(T)))
+            if (!valType.IsEquivalentTo(typeof(T)))
+            { 
+                if(valType.IsEquivalentTo(typeof(Guid)) && typeof(T).IsEquivalentTo(typeof(string)))
+                    return (T?)(object)val.ToString();
+
+                if(typeof(T).IsEquivalentTo(typeof(Guid)))
+                    val = Guid.Parse(val.ToString());
+
                 return (T?)Convert.ChangeType(val, typeof(T));
+            }
 
             return (T?)val;
         }
