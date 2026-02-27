@@ -171,6 +171,15 @@ ___
 
 Iterates over a list of objects in parallel and runs a function on each one.
 
+### Exception
+
+##
+<small>async Task</small> <b>WithData</b>(<small>object data</small>)
+
+Adds the given data to the exception's Data dictionary. This is useful for adding additional context to exceptions when they are thrown.
+
+    throw new ArgumentException("Make should be a Pontiac").WithData( new { Make = "Chevy"} );
+
 <br>
 
 <a href="classes" />

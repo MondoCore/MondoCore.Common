@@ -13,12 +13,12 @@
     <Description>Common classes used by other MondoCore libraries</Description>
     <RepositoryType>git</RepositoryType>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
-    <Version>3.5.3</Version>
+    <Version>3.6.0</Version>
     <Nullable>enable</Nullable>
     <LangVersion>latest</LangVersion>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <Title>MondoCore.Common</Title>
-    <PackageTags>.Net common</PackageTags>
+    <PackageTags>.Net;common</PackageTags>
     <PackageId>$(AssemblyName)</PackageId>
   </PropertyGroup>
 
